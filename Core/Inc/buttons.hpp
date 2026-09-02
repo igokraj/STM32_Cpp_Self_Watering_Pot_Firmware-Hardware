@@ -28,3 +28,7 @@ class Button {
     // Returns 1 on a debounced press event, or on an auto-repeat tick while held, else 0
     uint8_t Update();
 };
+
+
+extern Button btnPlus;
+extern Button btnMinus;

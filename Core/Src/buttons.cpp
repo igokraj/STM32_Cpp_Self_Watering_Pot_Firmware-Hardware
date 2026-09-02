@@ -6,6 +6,26 @@
 #define HOLD_DELAY_MS 500 // -> How long user needs to hold the button pressed for the mechanism to initialize (button pressed ... 500 ms ... mechanism initialization)
 #define REPEAT_INTERVAL_MS 100 // -> Intervals between value changes while the mechanism is running (100 RPM ... 150 ms ... 200 RPM)
 
+Button btnPlus{ 
+Button_Plus_GPIO_Port,    
+Button_Plus_Pin , 
+GPIO_PIN_SET, 
+0,
+0,
+0 
+};
+
+Button btnMinus{ 
+Button_Minus_GPIO_Port,
+Button_Minus_Pin, 
+GPIO_PIN_SET,
+0,
+0,
+0 
+};
+
+
+
 uint8_t Button::Update()
 {
   GPIO_PinState raw = HAL_GPIO_ReadPin(port, pin);
