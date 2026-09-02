@@ -1,0 +1,26 @@
+# Build output (CMake / Ninja / STM32CubeIDE)
+build/
+Debug/
+Release/
+cmake-build-*/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# STM32CubeIDE project files
+.settings/
+.cproject
+.project
+Debug/
+RelWithDebInfo/
+
+# Editor / IDE
+.vscode/
+*.user
+
+# OS junk
+Thumbs.db
+.DS_Store
