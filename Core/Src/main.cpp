@@ -57,9 +57,9 @@ DigitalOutput MOSFET(Pump_on_GPIO_Port, Pump_on_Pin);
 void ApplyOutPuts(SystemStatus_t status) {
     switch (status) {
         case SystemStatus_t::Waiting:
-            RedLed.on();
+            RedLed.off();
             BlueLed.off();
-            GreenLed.on();
+            GreenLed.off();
             MOSFET.off();
             break;
         case SystemStatus_t::Watering:
@@ -155,7 +155,6 @@ uint8_t currentHumidity = AloePot.GetDesiredHumidity();
 uint8_t newHumidity = (currentHumidity >= 10) ? currentHumidity - 10 : 0;
     AloePot.SetDesiredHumidity(newHumidity);
 }
-
 AloePot.UpdateSystem(ConvertToPercent(RawHumValue), WaterLevel_is_OK);
 
 ApplyOutPuts(AloePot.GetSystemStatus());

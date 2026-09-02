@@ -21,7 +21,7 @@ class Button {
         this->pin = pin;
         this->stableState = stableState;
         this->counter = counter;
-        this->pressStartTick = pressStartTick;
+        this->pressStartTick = pressStartTick; 
         this->lastRepeatTick = lastRepeatTick;
     }
 
