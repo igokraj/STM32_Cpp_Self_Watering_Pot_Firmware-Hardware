@@ -3,6 +3,7 @@
 #include "stm32f4xx_hal.h"
 #include "stdbool.h" // It is not necessary in C++
 #include "main.h" 
+#include "adc.h"
 
 enum class SystemStatus_t {
     Waiting,
@@ -10,6 +11,9 @@ enum class SystemStatus_t {
     EmptyContainer,
     Error
 };
+
+volatile uint32_t RawHumValue = 0;
+
 
 
 class Pot {
@@ -71,7 +75,24 @@ void app_main() {
 
 
 while (1) {
-    
+  
 
 }
 }
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+if (htim->Instance == TIM6) {
+HAL_ADC_Start_IT(&hadc1);
+}
+
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    if (hadc->Instance == ADC1) {
+        RawHumValue = HAL_ADC_GetValue(hadc);
+    }
+}
+  
+
