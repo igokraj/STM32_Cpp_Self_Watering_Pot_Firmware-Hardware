@@ -14,6 +14,9 @@ enum class SystemStatus_t {
 
 volatile uint32_t RawHumValue = 0;
 
+volatile bool ManualButtonStart;
+
+
 // 0-4095 conversion into 0-100% Humidity value
 uint8_t ConvertToPercent(uint32_t rawValue) {
     uint8_t Humidity = (rawValue * 100) / 4095;
@@ -51,7 +54,7 @@ class Pot {
         if (currentHumidity > 100) {
                 SystemStatus = SystemStatus_t::Error;
             }
-        else if (currentHumidity <= DesiredHumidity) {
+        else if (currentHumidity <= DesiredHumidity || ManualButtonStart) {
             SystemStatus = SystemStatus_t::Watering;
         }
         else {
@@ -102,5 +105,12 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
         RawHumValue = HAL_ADC_GetValue(hadc);
     }
 }
-  
 
+// Callback for 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+
+  if (GPIO_Pin == Start_Button_Pin) {
+  ManualButtonStart = !ManualButtonStart;
+  }
+}
