@@ -114,7 +114,7 @@ class Pot {
         if (currentHumidity > 100) {
                 SystemStatus = SystemStatus_t::Error;
             }
-        else if (currentHumidity <= DesiredHumidity || ManualButtonStart) {
+        else if (currentHumidity <= DesiredHumidity - 15 || ManualButtonStart) {
             SystemStatus = SystemStatus_t::Watering;
         }
         else {
