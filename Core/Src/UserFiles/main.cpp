@@ -2,7 +2,6 @@
 #include "iwdg.h"
 #include "main.h"
 #include "stm32f4xx_hal.h"
-#include "stdbool.h" // It is not necessary in C++
 #include "adc.h"
 #include "buttons.hpp"
 #include "display_ui.hpp"
@@ -15,8 +14,21 @@ volatile uint32_t RawHumValue = 0;
 // This variable is used for the manual start (it is a flag in the EXTI button handling)
 volatile bool ManualButtonStart = 0;
 
-// This variable indicates water level in the container (1 -> container is empty, 0 - > container still have water)
+// This variable indicates water level in the container (1 -> container is empty, 0 -> container still has water)
 bool ContainerEmpty;
+
+// A healthy, properly connected sensor never sits at either end of the ADC range, so a reading outside these bounds means the sensor failed (broken wire? no power?)
+#define SENSOR_RAW_VALUE_MIN 50
+#define SENSOR_RAW_VALUE_MAX 4045
+bool SensorFailed(uint32_t RawValue) {
+    if (RawValue < SENSOR_RAW_VALUE_MIN || RawValue > SENSOR_RAW_VALUE_MAX) {
+     return true;
+    }
+    else {
+        return false; 
+    }
+}
+
 
 
 // 0-4095 conversion into 0-100% Humidity value
@@ -25,7 +37,7 @@ uint8_t ConvertToPercent(uint32_t rawValue) {
     return Humidity;
 }
 
-// This is the class for handling output pins (e.g. 3x RGB Led's, MOSFET gate, Buzzer);
+// This is the class for handling output pins (e.g. 3x RGB LEDs, MOSFET gate, Buzzer)
 class DigitalOutput {
     private:
     GPIO_TypeDef *port_;
@@ -79,7 +91,6 @@ void ApplyOutPuts(SystemStatus_t status) {
             GreenLed.off();
             MOSFET.off();
             Buzzer.on();
-            // After ~2s watchdog will reset the microcontroller
             break;
     }
 }
@@ -87,42 +98,74 @@ void ApplyOutPuts(SystemStatus_t status) {
 class Pot {
 
     private:
+
     uint8_t DesiredHumidity;
     SystemStatus_t SystemStatus = SystemStatus_t::Waiting;
+
+    // static const in the class => one value shared by the whole class, not a per-object copy
+    static const uint8_t WateringOffset = 15; // if Humidity <= DesiredHumidity - WateringOffset -> Watering
+    static const uint32_t MaxWateringMs = 15000; // maximum continuous watering time, if this limit is exceeded, the system will return an error.
+    uint32_t WateringStartTick = 0;
+
+    bool SystemFailed = false;
     
     public: 
+
     Pot(uint8_t DesiredHumidity) {
         this->DesiredHumidity = DesiredHumidity;
     }
 
     // ***** GETTERS *****
     // a) Getter for the desired humidity 
-    uint8_t GetDesiredHumidity() const { // Getter does not change the parameter (const-correctness)
+    uint8_t GetDesiredHumidity() const { // const method - does not modify the object (const-correctness)
         return DesiredHumidity;
     }
     // b) Getter for the current system status
-    SystemStatus_t GetSystemStatus() const { // Getter does not change the parameter (const-correctness)
+    SystemStatus_t GetSystemStatus() const { // const method - does not modify the object (const-correctness)
         return SystemStatus;
     }
     // *******************
 
 
-    // System status update logic 
-    void UpdateSystem(uint8_t currentHumidity, bool ContainerEmpty) {
+    /* Decides the next SystemStatus, checked in priority order:
+    a latched pump fault (only the Start button can clear it) beats a bad sensor reading, which beats an empty container, which beats the humidity threshold itself. Watering is capped at MaxWateringMs so a stuck sensor cannot leave the pump running forever */
+    void UpdateSystem(uint8_t currentHumidity, bool ContainerEmpty, bool SensorFailed, bool ManualButtonStart) {
 
-        if (!ContainerEmpty) {
-        if (currentHumidity > 100) {
+        if (ManualButtonStart) { 
+            Clear_SystemFailed(); 
+        }
+        if (SystemFailed) {
+            SystemStatus = SystemStatus_t::Error;
+            return;
+        }
+
+        if (SensorFailed) {
                 SystemStatus = SystemStatus_t::Error;
+                WateringStartTick = 0;
+                return;
             }
-        else if (currentHumidity <= DesiredHumidity || ManualButtonStart) {
-            SystemStatus = SystemStatus_t::Watering;
+        if (ContainerEmpty) {
+                SystemStatus = SystemStatus_t::EmptyContainer;
+                WateringStartTick = 0;
+                return;
+        }
+        bool PlantNeedsWater = (currentHumidity <= DesiredHumidity - WateringOffset || ManualButtonStart);
+
+        if (PlantNeedsWater) {
+            if (SystemStatus == SystemStatus_t::Watering) {
+                if (HAL_GetTick() - WateringStartTick > MaxWateringMs) {
+                    SystemStatus = SystemStatus_t::Error;
+                    SystemFailed = true; // // pump ran too long - STOP the system
+                }
+            }
+            else {
+                WateringStartTick = HAL_GetTick();
+                SystemStatus = SystemStatus_t::Watering;
+            }
         }
         else {
             SystemStatus = SystemStatus_t::Waiting;
-        }
-        }
-        else {
-            SystemStatus = SystemStatus_t::EmptyContainer;
+            WateringStartTick = 0;
         }
     }
 
@@ -131,7 +174,13 @@ class Pot {
         this->DesiredHumidity = DesiredHumidity;
     }
     // ******************
+
+     void Clear_SystemFailed() {
+        SystemFailed = false;
+    }
 };
+
+   
 
 // Desired humidity set right after start of the system
 Pot AloePot(50);
@@ -160,17 +209,18 @@ uint8_t newHumidity = (currentHumidity >= 10) ? currentHumidity - 10 : 0;
     AloePot.SetDesiredHumidity(newHumidity);
 }
 
-uint8_t humidity = ConvertToPercent(RawHumValue);
-
-AloePot.UpdateSystem(humidity, ContainerEmpty);
+// Why did i use raw variable here? 
+// RawHumValue is volatile and can change under an ADC interrupt at any point, so it is snapshotted once here - otherwise ConvertToPercent and SensorFailed could end up judging two different readings within the same decision
+uint32_t raw = RawHumValue;
+uint8_t humidity = ConvertToPercent(raw);
+AloePot.UpdateSystem(humidity, ContainerEmpty, SensorFailed(raw), ManualButtonStart);
 
 ApplyOutPuts(AloePot.GetSystemStatus());
 
 RefreshDisplay(humidity, AloePot.GetDesiredHumidity(), AloePot.GetSystemStatus());
 
-if (AloePot.GetSystemStatus() != SystemStatus_t::Error) {
-    HAL_IWDG_Refresh(&hiwdg);
-}
+HAL_IWDG_Refresh(&hiwdg); // watchdog only guards against a hung main loop
+
 }
 
 
