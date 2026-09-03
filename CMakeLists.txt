@@ -48,15 +48,16 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    Core/Src/main.cpp
-    Core/Src/buttons.cpp
-    Core/Src/ssd1306.cpp
-    Core/Src/display_ui.cpp
+    Core/Src/UserFiles/main.cpp
+    Core/Src/UserFiles/buttons.cpp
+    Core/Src/UserFiles/ssd1306.cpp
+    Core/Src/UserFiles/display_ui.cpp
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+    Core/Inc/UserFiles
 )
 
 # Add project symbols (macros)
