@@ -4,7 +4,7 @@
 
 // These values are used in mechanism for rapidly increasing the value while holding down the button
 #define HOLD_DELAY_MS 500 // -> How long user needs to hold the button pressed for the mechanism to initialize (button pressed ... 500 ms ... mechanism initialization)
-#define REPEAT_INTERVAL_MS 100 // -> Intervals between value changes while the mechanism is running (100 RPM ... 150 ms ... 200 RPM)
+#define REPEAT_INTERVAL_MS 100 // -> How often the value changes once the auto-repeat is running
 
 Button btnPlus{ 
 Button_Plus_GPIO_Port,    
