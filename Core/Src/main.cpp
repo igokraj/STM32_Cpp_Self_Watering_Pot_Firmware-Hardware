@@ -61,18 +61,21 @@ void ApplyOutPuts(SystemStatus_t status) {
             BlueLed.off();
             GreenLed.off();
             MOSFET.off();
+            Buzzer.off();
             break;
         case SystemStatus_t::Watering:
             RedLed.off();
             BlueLed.off();
             GreenLed.on();
             MOSFET.on();
+            Buzzer.off();
             break;
         case SystemStatus_t::EmptyContainer:
             RedLed.off();
             BlueLed.on();
             GreenLed.off();
             MOSFET.off();
+            Buzzer.off();
             break;
         case SystemStatus_t::Error:
             Buzzer.on();
