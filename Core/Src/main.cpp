@@ -6,14 +6,9 @@
 #include "main.h" 
 #include "adc.h"
 #include "buttons.hpp"
+#include "display_ui.hpp"
+#include "system_status.hpp"
 #include "stm32f4xx_hal_gpio.h"
-
-enum class SystemStatus_t {
-    Waiting,
-    Watering,
-    EmptyContainer,
-    Error
-};
 
 // Raw value provided by the capacitive sensor
 volatile uint32_t RawHumValue = 0;
@@ -55,7 +50,6 @@ DigitalOutput GreenLed(Green_LED_GPIO_Port, Green_LED_Pin);
 DigitalOutput BlueLed(Blue_LED_GPIO_Port, Blue_LED_Pin);
 DigitalOutput Buzzer(Buzzer_Status_GPIO_Port, Buzzer_Status_Pin);
 DigitalOutput MOSFET(Pump_on_GPIO_Port, Pump_on_Pin);
-
 
 void ApplyOutPuts(SystemStatus_t status) {
     switch (status) {
@@ -145,8 +139,8 @@ Pot AloePot(50);
 
 void app_main() {
 
-
-
+HAL_IWDG_Refresh(&hiwdg);  // fresh watchdog window - display init takes a moment
+DisplayInit();
 
 while (1) {
 
@@ -166,9 +160,13 @@ uint8_t newHumidity = (currentHumidity >= 10) ? currentHumidity - 10 : 0;
     AloePot.SetDesiredHumidity(newHumidity);
 }
 
-AloePot.UpdateSystem(ConvertToPercent(RawHumValue), ContainerEmpty);
+uint8_t humidity = ConvertToPercent(RawHumValue);
+
+AloePot.UpdateSystem(humidity, ContainerEmpty);
 
 ApplyOutPuts(AloePot.GetSystemStatus());
+
+RefreshDisplay(humidity, AloePot.GetDesiredHumidity(), AloePot.GetSystemStatus());
 
 if (AloePot.GetSystemStatus() != SystemStatus_t::Error) {
     HAL_IWDG_Refresh(&hiwdg);

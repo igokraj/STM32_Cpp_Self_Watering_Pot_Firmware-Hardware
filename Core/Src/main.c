@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "i2c.h"
 #include "iwdg.h"
 #include "tim.h"
 #include "usart.h"
@@ -94,6 +95,7 @@ int main(void)
   MX_TIM6_Init();
   MX_USART2_UART_Init();
   MX_IWDG_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim6);
   app_main();
