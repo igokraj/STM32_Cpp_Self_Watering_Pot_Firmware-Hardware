@@ -18,7 +18,7 @@ enum class SystemStatus_t {
 volatile uint32_t RawHumValue = 0;
 volatile bool ManualButtonStart = 0;
 
-bool WaterLevel_is_OK;
+bool ContainerEmpty;
 
 
 // 0-4095 conversion into 0-100% Humidity value
@@ -111,9 +111,9 @@ class Pot {
 
 
     // System status update logic 
-    void UpdateSystem(uint8_t currentHumidity, bool WaterLevel_OK) {
+    void UpdateSystem(uint8_t currentHumidity, bool ContainerEmpty) {
 
-        if (WaterLevel_OK) {
+        if (!ContainerEmpty) {
         if (currentHumidity > 100) {
                 SystemStatus = SystemStatus_t::Error;
             }
@@ -147,7 +147,7 @@ void app_main() {
 while (1) {
 
 
-WaterLevel_is_OK = HAL_GPIO_ReadPin(Water_level_GPIO_Port, Water_level_Pin);
+ContainerEmpty = HAL_GPIO_ReadPin(Water_level_GPIO_Port, Water_level_Pin);
 
 if (btnPlus.Update()) {
     uint8_t newHumidity = AloePot.GetDesiredHumidity() + 10;
@@ -161,7 +161,7 @@ uint8_t currentHumidity = AloePot.GetDesiredHumidity();
 uint8_t newHumidity = (currentHumidity >= 10) ? currentHumidity - 10 : 0;
     AloePot.SetDesiredHumidity(newHumidity);
 }
-AloePot.UpdateSystem(ConvertToPercent(RawHumValue), WaterLevel_is_OK);
+AloePot.UpdateSystem(ConvertToPercent(RawHumValue), ContainerEmpty);
 
 ApplyOutPuts(AloePot.GetSystemStatus());
 
