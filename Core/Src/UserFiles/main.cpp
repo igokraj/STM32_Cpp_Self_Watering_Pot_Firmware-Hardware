@@ -3,7 +3,6 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "stdbool.h" // It is not necessary in C++
-#include "main.h" 
 #include "adc.h"
 #include "buttons.hpp"
 #include "display_ui.hpp"
@@ -98,7 +97,7 @@ class Pot {
 
     // ***** GETTERS *****
     // a) Getter for the desired humidity 
-    int GetDesiredHumidity() const { // Getter does not change the parameter (const-correctness)
+    uint8_t GetDesiredHumidity() const { // Getter does not change the parameter (const-correctness)
         return DesiredHumidity;
     }
     // b) Getter for the current system status
@@ -131,6 +130,7 @@ class Pot {
     void SetDesiredHumidity(uint8_t DesiredHumidity) {
         this->DesiredHumidity = DesiredHumidity;
     }
+    // ******************
 };
 
 // Desired humidity set right after start of the system
