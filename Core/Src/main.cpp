@@ -27,8 +27,7 @@ uint8_t ConvertToPercent(uint32_t rawValue) {
     return Humidity;
 }
 
-
-
+// This is the class for handling output pins (e.g. 3x RGB Led's, MOSFET gate, Buzzer);
 class DigitalOutput {
     private:
     GPIO_TypeDef *port_;
@@ -78,6 +77,10 @@ void ApplyOutPuts(SystemStatus_t status) {
             Buzzer.off();
             break;
         case SystemStatus_t::Error:
+            RedLed.on();
+            BlueLed.off();
+            GreenLed.off();
+            MOSFET.off();
             Buzzer.on();
             // After ~2s watchdog will reset the microcontroller
             break;
