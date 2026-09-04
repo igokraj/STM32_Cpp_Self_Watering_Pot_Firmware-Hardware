@@ -7,6 +7,8 @@
 #include "display_ui.hpp"
 #include "system_status.hpp"
 #include "stm32f4xx_hal_gpio.h"
+#include "buzzer.hpp"
+#include "digital_output.hpp"
 
 // Raw value provided by the capacitive sensor
 volatile uint32_t RawHumValue = 0;
@@ -29,32 +31,12 @@ bool SensorFailed(uint32_t RawValue) {
     }
 }
 
-
-
 // 0-4095 conversion into 0-100% Humidity value
 uint8_t ConvertToPercent(uint32_t rawValue) {
     uint8_t Humidity = (rawValue * 100) / 4095;
     return Humidity;
 }
 
-// This is the class for handling output pins (e.g. 3x RGB LEDs, MOSFET gate, Buzzer)
-class DigitalOutput {
-    private:
-    GPIO_TypeDef *port_;
-    uint16_t pin_;
-    
-    public:
-    DigitalOutput(GPIO_TypeDef *port, uint16_t pin) : port_(port), pin_(pin)
-    {
-    }
-
-    void on() {
-        HAL_GPIO_WritePin(port_, pin_, GPIO_PIN_SET);
-    }
-    void off() {
-        HAL_GPIO_WritePin(port_, pin_, GPIO_PIN_RESET);
-    }
-};
 
 DigitalOutput RedLed(Red_LED_GPIO_Port, Red_LED_Pin);
 DigitalOutput GreenLed(Green_LED_GPIO_Port, Green_LED_Pin);
@@ -90,7 +72,9 @@ void ApplyOutPuts(SystemStatus_t status) {
             BlueLed.off();
             GreenLed.off();
             MOSFET.off();
-            Buzzer.on();
+
+            // Beeps a short pattern -> look at BuzzerBeep() to select the exact timing
+            BuzzerBeep();
             break;
     }
 }
@@ -155,7 +139,7 @@ class Pot {
             if (SystemStatus == SystemStatus_t::Watering) {
                 if (HAL_GetTick() - WateringStartTick > MaxWateringMs) {
                     SystemStatus = SystemStatus_t::Error;
-                    SystemFailed = true; // // pump ran too long - STOP the system
+                    SystemFailed = true; // pump ran too long - STOP the system
                 }
             }
             else {

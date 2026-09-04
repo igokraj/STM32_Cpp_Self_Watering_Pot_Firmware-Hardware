@@ -52,6 +52,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/UserFiles/buttons.cpp
     Core/Src/UserFiles/ssd1306.cpp
     Core/Src/UserFiles/display_ui.cpp
+    Core/Src/UserFiles/buzzer.cpp
 )
 
 # Add include paths
