@@ -241,7 +241,7 @@ HAL_StatusTypeDef HAL_IWDG_Refresh(IWDG_HandleTypeDef *hiwdg)
   __HAL_IWDG_RELOAD_COUNTER(hiwdg);
 
   /* Return function status */
-  return HAL_OK;
+   return HAL_OK;
 }
 
 

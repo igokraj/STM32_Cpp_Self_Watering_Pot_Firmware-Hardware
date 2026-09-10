@@ -51,10 +51,10 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, Blue_LED_Pin|Red_LED_Pin|Buzzer_Status_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, Pump_on_Pin|Buzzer_Status_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, Green_LED_Pin|Pump_on_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, Red_LED_Pin|Green_LED_Pin|Blue_LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : Start_Button_Pin */
   GPIO_InitStruct.Pin = Start_Button_Pin;
@@ -62,22 +62,22 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(Start_Button_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Blue_LED_Pin Red_LED_Pin Buzzer_Status_Pin */
-  GPIO_InitStruct.Pin = Blue_LED_Pin|Red_LED_Pin|Buzzer_Status_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : Green_LED_Pin Pump_on_Pin */
-  GPIO_InitStruct.Pin = Green_LED_Pin|Pump_on_Pin;
+  /*Configure GPIO pins : Pump_on_Pin Buzzer_Status_Pin */
+  GPIO_InitStruct.Pin = Pump_on_Pin|Buzzer_Status_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Button_Plus_Pin Button_Minus_Pin Water_level_Pin */
-  GPIO_InitStruct.Pin = Button_Plus_Pin|Button_Minus_Pin|Water_level_Pin;
+  /*Configure GPIO pins : Red_LED_Pin Green_LED_Pin Blue_LED_Pin */
+  GPIO_InitStruct.Pin = Red_LED_Pin|Green_LED_Pin|Blue_LED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : Button_Minus_Pin Button_Plus_Pin Water_level_Pin */
+  GPIO_InitStruct.Pin = Button_Minus_Pin|Button_Plus_Pin|Water_level_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
