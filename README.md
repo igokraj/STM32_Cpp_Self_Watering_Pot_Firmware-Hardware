@@ -10,6 +10,9 @@ This system would honestly run fine on a much smaller microcontroller — less p
 
 ## Photos
 
+**Breadboard prototype**
+![Breadboard prototype](Images/Breadboard_prototype.jpg)
+
 **Schematic**
 ![Schematic](Images/Schematic.png)
 
