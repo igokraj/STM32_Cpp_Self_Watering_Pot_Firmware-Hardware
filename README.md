@@ -6,7 +6,7 @@ Do obsługi tego systemu spokojnie można by było użyć mikrokontrolera o mnie
 
 This project set out to build an automatic, self-watering plant pot based on the STM32F446RE microcontroller. The firmware is written in C++. The system keeps an eye on soil moisture and turns the pump on by itself once the soil gets too dry. Watering can also be forced manually, and the system has a few safeguards in case something goes wrong (a stuck pump, a broken sensor, a hung program, an empty water container).
 
-This system would honestly run fine on a much smaller microcontroller — less performance, fewer pins, less memory — but since the only board I physically had for testing was a NUCLEO-F446RE, I used the same chip on the PCB too, just to keep the project consistent. Below are photos of the prototype on a breadboard (I used an LED as a stand-in for the MOSFET, to simulate it switching on/off, a regular potentiometer as a stand-in for the moisture sensor, and for the water level sensor just a loose wire that can be plugged in or pulled out).
+This system would honestly run fine on a much smaller microcontroller which would have a less performance, fewer pins, less memory, but since the only board I physically had for testing was a NUCLEO-F446RE, I used the same chip on the PCB too, just to keep the project consistent. Below are photos of the prototype on a breadboard (I used an LED as a stand-in for the MOSFET, to simulate it switching on/off, a regular potentiometer as a stand-in for the moisture sensor, and for the water level sensor just a loose wire that can be plugged in or pulled out).
 
 ## Photos
 
