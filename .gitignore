@@ -1,1 +1,7 @@
+.vscode/
 hardware/Self_Watering_POT/.history/
+hardware/Self_Watering_POT/*-backups/
+*.kicad_pcb-bak
+*.kicad_sch-bak
+_autosave-*
+fp-info-cache
