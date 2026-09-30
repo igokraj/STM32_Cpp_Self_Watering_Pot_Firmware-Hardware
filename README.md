@@ -17,11 +17,11 @@ This system would honestly run fine on a much smaller microcontroller which woul
 ![Schematic](Images/Schematic.png)
 
 **PCB layout**
-![PCB layout](Images/PCB_Layout.png)
+![PCB layout](Images/Board_Design.png)
 
 **Board in 3D**
-![PCB 3D](Images/PCB_3D.png)
-![PCB 3D — another view](Images/PCB_3D_2.png)
+![PCB 3D](Images/Board3D_1.png)
+![PCB 3D — another view](Images/Board3D_2.png)
 
 ## How it works
 
