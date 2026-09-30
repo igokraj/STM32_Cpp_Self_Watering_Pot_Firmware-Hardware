@@ -16,12 +16,13 @@ This system would honestly run fine on a much smaller microcontroller which woul
 **Schematic**
 ![Schematic](Images/Schematic.png)
 
-**PCB layout**
-![PCB layout](Images/Board_Design.png)
+**PCB layout and 3D render**
 
-**Board in 3D**
-![PCB 3D](Images/Board3D_1.png)
-![PCB 3D — another view](Images/Board3D_2.png)
+<p align="center">
+  <img src="Images/Board_Design.png" height="300">
+  <img src="Images/Board3D_1.png" height="300">
+  <img src="Images/Board3D_2.png" height="300">
+</p>
 
 ## How it works
 
